@@ -16,8 +16,9 @@ function startMatch() {
     hideElement(eleButtonStart);
     showElement(eleButtonNext);
 
+    eleCommentarySection.innerHTML = "";
+
     resetStatistics();
-    
     updateOverStartCommentory();
 }
 
@@ -25,10 +26,46 @@ function resetStatistics() {
     overs = [], players = [], wicketsList = [];
 
     //Adding players details
-    players.push(new Batsman("Kirat Boli", 0));
-    players.push(new Batsman("NS Nodhi", 0));
-    players.push(new Batsman("R Rumrah", 0));
-    players.push(new Batsman("Shashi Henra", 0));
+    players.push(new Batsman("Kirat Boli", [
+        new ScoreProbablity(0, 5),
+        new ScoreProbablity(1, 30),
+        new ScoreProbablity(2, 25),
+        new ScoreProbablity(3, 10),
+        new ScoreProbablity(4, 15),
+        new ScoreProbablity(5, 1),
+        new ScoreProbablity(6, 9),
+        new ScoreProbablity(OUT, 5)
+    ]));
+    players.push(new Batsman("NS Nodhi", [
+        new ScoreProbablity(0, 10),
+        new ScoreProbablity(1, 40),
+        new ScoreProbablity(2, 20),
+        new ScoreProbablity(3, 5),
+        new ScoreProbablity(4, 10),
+        new ScoreProbablity(5, 1),
+        new ScoreProbablity(6, 4),
+        new ScoreProbablity(OUT, 10)
+    ]));
+    players.push(new Batsman("R Rumrah", [
+        new ScoreProbablity(0, 20),
+        new ScoreProbablity(1, 30),
+        new ScoreProbablity(2, 15),
+        new ScoreProbablity(3, 5),
+        new ScoreProbablity(4, 5),
+        new ScoreProbablity(5, 1),
+        new ScoreProbablity(6, 4),
+        new ScoreProbablity(OUT, 20)
+    ]));
+    players.push(new Batsman("Shashi Henra", [
+        new ScoreProbablity(0, 30),
+        new ScoreProbablity(1, 25),
+        new ScoreProbablity(2, 5),
+        new ScoreProbablity(3, 0),
+        new ScoreProbablity(4, 5),
+        new ScoreProbablity(5, 1),
+        new ScoreProbablity(6, 4),
+        new ScoreProbablity(OUT, 30)
+    ]));
 
     var striker = getNextBatsman(0);
     var nonStriker = getNextBatsman(1);
@@ -38,7 +75,7 @@ function resetStatistics() {
 
 
 function bowlNextbBall() {
-    if(match.getStatus()) {
+    if (match.getStatus()) {
         //If match already completed and trying continue again
         updateMatchStatusCommentory(match.getStatus());
         return;
@@ -46,59 +83,64 @@ function bowlNextbBall() {
 
     var currentOver = getCurrentOver();
     var ballsBowled = currentOver.length;
-    if(!ballsBowled) {
+    if (!ballsBowled) {
         //new over
         overs.push(currentOver);
     }
 
     var overNo = getOversBowled() - 1;
     var ballNo = ballsBowled + 1;
-    var runs = generateRandomScore();
-    
+
     var batsman = match.getBatsman();
-    batsman.setScore(batsman.getScore() + runs);
+    var runs = getWeightedRandomNumber(batsman.getProbability());
+
     batsman.setBalls(batsman.getBalls() + 1);
-    match.setScore(match.getScore() + runs);
     currentOver.push(new Ball(ballNo, runs, batsman));
 
-    var ballCommentory = overNo + "." + ballNo + " " + batsman.getName() + " scores " + runs;
-    updateCommentory(ballCommentory);
+    var ballCommentory, ball = overNo + "." + ballNo;
+    if (runs == OUT) {
+        //If batsman out, changing current batsman status, updating wickets and updating next batsman
+        ballCommentory = ball + " " + batsman.getName() + " <b>OUT<b>";
 
-    if(runs == 0) {
         setBatsmanOut(batsman);
-
-        var ball = overNo + "." + ballNo;
         wicketsList.push(new Wicket(ball, batsman));
-        
+
         let nextBatsman = getNextBatsman(wicketsList.length + 1);
         match.setBatsman(nextBatsman);
-    } 
+    } else {
+        batsman.setScore(batsman.getScore() + runs);
+        match.setScore(match.getScore() + runs);
+        ballCommentory = ball + " " + batsman.getName() + " scores " + runs;
+    }
+    updateCommentory(ballCommentory);
 
-    if(runs % 2 != 0) {
+    if (runs % 2 != 0 && runs != OUT) {
         //change batsman strike if scores odd runs
         changeBatsmanStrike();
     }
 
-    if(isOverCompleted(currentOver)) {
+    if (isOverCompleted(currentOver)) {
         //change batsman strike on over end
         changeBatsmanStrike();
     }
 
     var matchStatus = getMatchStatus();
-    if(matchStatus) {
+    if (matchStatus) {
         match.setStatus(matchStatus);
         updateMatchStatusCommentory(matchStatus);
         printScoreCard();
+        showStartAgainOption();
     } else {
-        if(isOverCompleted(currentOver)) {
+        if (isOverCompleted(currentOver)) {
             //Match not completed and over completed
             updateOverStartCommentory();
         }
     }
 }
 
-function generateRandomScore() {
-    return Math.floor(Math.random() * (6 - 0)) + 0;
+function showStartAgainOption() {
+    eleButtonStart.innerHTML = "Restart Again ?";
+    showElement(eleButtonStart);
 }
 
 function updateOverStartCommentory() {
@@ -120,18 +162,18 @@ function updateCommentory(commentory) {
 function printScoreCard() {
     let scoreCard = "";
     players.forEach(batsman => {
-        if(batsman.getStatus() != BattingStatus.NOTBATTED) {
+        if (batsman.getStatus() != BattingStatus.NOTBATTED) {
             //To only iterate through batted batsman list
             scoreCard += batsman.getName() + " - " + batsman.getScore();
-            if(batsman.getStatus() == BattingStatus.PLAYING) {
+            if (batsman.getStatus() == BattingStatus.PLAYING) {
                 //to add * to notout batsman
                 scoreCard += "*"
             }
-            scoreCard += " (" + batsman.getBalls() + " balls)<br>"; 
+            scoreCard += " (" + batsman.getBalls() + " balls)<br>";
         }
     });
 
-    if(scoreCard) {
+    if (scoreCard) {
         updateCommentory(scoreCard);
     }
 }
@@ -144,17 +186,17 @@ function printScoreCard() {
  */
 function getMatchStatus() {
     var matchStatus = "";
-    if(getTargetLeft() <= 0) {
+    if (getTargetLeft() <= 0) {
         matchStatus += "Bengaluru won by " + getWicketsLeft() + " wickets";
 
         var ballsRemaining = getBallsLeft();
         //if won on last ball should not shown as 0 balls remaining
-        if(ballsRemaining != 0) {
+        if (ballsRemaining != 0) {
             matchStatus += " " + getBallsRemainingMessage(ballsRemaining);
         }
-    } else if(getWicketsLeft() <= 1) {
+    } else if (getWicketsLeft() <= 1 || getBallsLeft() <= 0) {
         matchStatus += "Chennai won the match by " + (getTargetLeft() - 1) + " runs";
-    } else if(getOversLeft() == 0 && getTargetLeft() <= 0) {
+    } else if (getOversLeft() == 0 && getTargetLeft() <= 0) {
         matchStatus += "Hurray!! Match Tie";
     }
     return matchStatus
@@ -190,7 +232,7 @@ function getOversBowled() {
 
 function getCurrentOver() {
     var length = getOversBowled();
-    if(length == 0 || isOverCompleted(overs[length-1])) {
+    if (length == 0 || isOverCompleted(overs[length - 1])) {
         return [];
     }
     return overs[length - 1];
@@ -216,30 +258,30 @@ function getBallsLeft() {
 
 function getBallsRemainingMessage(remaining) {
     var message;
-    if(remaining == 1) {
-        message = remaining + " ball"
-    } else if(remaining < ballsPerOver) {
-        message = remaining + " balls"
+    if (remaining <= ballsPerOver) {
+        message = remaining + " ball(s)"
     } else {
-        message =  Math.floor(remaining / ballsPerOver) + "." + (remaining % ballsPerOver) + " overs";
+        message = Math.floor(remaining / ballsPerOver) + "." + (remaining % ballsPerOver) + " overs";
     }
-    return " and "  + message + " remaining";
+    return " and " + message + " remaining";
 }
 
 function getBallsLeftInLastOver() {
     var lastOver = getOver(getOversBowled() - 1);
-    return  ballsPerOver - lastOver.length;
+    return ballsPerOver - lastOver.length;
 }
 
 function getNextBatsman(batsmanPosition) {
     let batsman = getBatsman(batsmanPosition);
-    batsman.setStatus(BattingStatus.PLAYING);
+    if (batsman) {
+        batsman.setStatus(BattingStatus.PLAYING);
+    }
     return batsman;
 }
 
 function getBatsman(batsmanPosition) {
     let batsman = null;
-    if(batsmanPosition < players.length) {
+    if (batsmanPosition < players.length) {
         batsman = players[batsmanPosition];
     }
     return batsman;

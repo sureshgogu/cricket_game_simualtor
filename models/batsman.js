@@ -5,43 +5,43 @@ function Batsman(name, probability) {
     this.probability = probability;
     this.status = BattingStatus.NOTBATTED;
 
-    this.getName = function() {
+    this.getName = function () {
         return this.name;
     }
 
-    this.setName = function(name) {
+    this.setName = function (name) {
         this.name = name;
     }
 
-    this.getScore = function() {
+    this.getScore = function () {
         return this.score;
     }
 
-    this.setScore = function(score) {
+    this.setScore = function (score) {
         this.score = score;
     }
 
-    this.getBalls = function() {
+    this.getBalls = function () {
         return this.balls;
     }
 
-    this.setBalls = function(balls) {
+    this.setBalls = function (balls) {
         this.balls = balls;
     }
 
-    this.getProbability = function() {
+    this.getProbability = function () {
         return this.probability;
     }
 
-    this.setProbability = function(probability) {
+    this.setProbability = function (probability) {
         this.probability = probability;
     }
 
-    this.getStatus = function() {
+    this.getStatus = function () {
         return this.status;
     }
 
-    this.setStatus = function(status) {
+    this.setStatus = function (status) {
         this.status = status;
     }
 }
