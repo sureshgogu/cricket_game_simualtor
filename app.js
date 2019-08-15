@@ -2,14 +2,14 @@ var overs = [];
 var players = [];
 var match;
 var wicketsList = [];
-var totalOvers = 4;
+var totalOvers = 4, ballsPerOver = 6;
 
-var eleCommentory;
+var eleCommentarySection;
 var eleButtonStart;
 var eleButtonNext;
 
 document.addEventListener('DOMContentLoaded', function () {
-    eleCommentory = document.getElementsByClassName("commentory-area")[0];
+    eleCommentarySection = document.getElementsByClassName("commentary-section")[0];
     eleButtonStart = document.getElementsByClassName("button-start")[0];
     eleButtonNext = document.getElementsByClassName("button-next")[0];
 
@@ -146,7 +146,7 @@ function getOver(no) {
 }
 
 function isOverCompleted(over) {
-    return over.length == 6;
+    return over.length == ballsPerOver;
 }
 
 function getBallsLeft() {
@@ -155,7 +155,7 @@ function getBallsLeft() {
     var oversLength = overs.length;
     var oversLeft = totalOvers - oversLength;
     balls = getBallsLeftInLastOver();
-    balls += oversLeft * 6;
+    balls += oversLeft * ballsPerOver;
     return balls;
 }
 
@@ -163,17 +163,17 @@ function getBallsRemainingMessage(remaining) {
     var message;
     if(remaining == 1) {
         message = remaining + " ball"
-    } else if(remaining < 6) {
+    } else if(remaining < ballsPerOver) {
         message = remaining + " balls"
     } else {
-        message =  Math.floor(remaining / 6) + "." + (remaining % 6) + " overs";
+        message =  Math.floor(remaining / ballsPerOver) + "." + (remaining % ballsPerOver) + " overs";
     }
     return " and "  + message + " remaining";
 }
 
 function getBallsLeftInLastOver() {
     var lastOver = getOver(overs.length - 1);
-    return  6 - lastOver.length;
+    return  ballsPerOver - lastOver.length;
 }
 
 
@@ -201,9 +201,9 @@ function updateOverStartCommentory() {
 }
 
 function updateCommentory(commentory) {
-    var html = eleCommentory.innerHTML;
+    var html = eleCommentarySection.innerHTML;
     html += commentory;
-    eleCommentory.innerHTML = html;
+    eleCommentarySection.innerHTML = html;
 }
 
 function printScoreCard() {
