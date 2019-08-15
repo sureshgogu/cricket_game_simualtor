@@ -1,7 +1,7 @@
-function Match(target, status, batsman, nonStriker) {
+function Match(target, batsman, nonStriker) {
     this.target = target;
     this.score = 0;
-    this.status = status;
+    this.status = "";
     this.batsman = batsman;
     this.nonStriker = nonStriker;
 

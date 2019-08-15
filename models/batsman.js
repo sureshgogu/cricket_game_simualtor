@@ -3,7 +3,7 @@ function Batsman(name, probability) {
     this.score = 0;
     this.balls = 0;
     this.probability = probability;
-    this.status = statusNOTBATTED;
+    this.status = BattingStatus.NOTBATTED;
 
     this.getName = function() {
         return this.name;
