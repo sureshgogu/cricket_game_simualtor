@@ -1,9 +1,9 @@
 function hideElement(element) {
-    element.style = "display : none";
+    element.classList.add("hide");
 }
 
 function showElement(element) {
-    element.style = "display : block";
+    element.classList.remove("hide");
 }
 
 function setInnerHTML(element, html) {

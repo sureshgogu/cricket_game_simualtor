@@ -164,10 +164,10 @@ function getMatchStatus() {
         if (ballsRemaining != 0) {
             matchStatus += " " + getBallsRemainingMessage(ballsRemaining);
         }
+    } else if (getBallsLeft(overs) <= 0 && getTargetLeft(match) == 1) {
+        matchStatus += "Hurray!! Match Tie";
     } else if (getWicketsLeft(players, wicketsList) <= 1 || getBallsLeft(overs) <= 0) {
         matchStatus += "Chennai won the match by " + (getTargetLeft(match) - 1) + " runs";
-    } else if (getOversLeft(overs) == 0 && getTargetLeft(match) <= 0) {
-        matchStatus += "Hurray!! Match Tie";
     }
     return matchStatus
 }

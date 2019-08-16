@@ -15,3 +15,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.hide {
+    display: none;
+}
