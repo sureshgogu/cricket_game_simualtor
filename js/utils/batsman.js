@@ -4,6 +4,9 @@ function setBatsManInfo(name, scoreProbability) {
 }
 
 function getProbability(scoreProbability) {
+    if(!Array.isArray(scoreProbability)) {
+        return null
+    }
     var probability = [];
     for (var i = 0, iLen = scoreProbability.length; i < iLen; i++) {
         var ele = scoreProbability[i];

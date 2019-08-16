@@ -15,6 +15,10 @@ function appentElement(parentElement, childElement) {
 }
 
 function getWeightedRandomNumber(weightedProbability) {
+    if(!Array.isArray(weightedProbability)) {
+        return null
+    }
+
     var random = Math.floor(Math.random() * 100);
 
     let sum = 0;

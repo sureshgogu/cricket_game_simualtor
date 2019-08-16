@@ -68,6 +68,9 @@ function bowlNextbBall() {
 
     var batsman = match.getBatsman();
     var runs = getWeightedRandomNumber(batsman.getProbability());
+    if(!runs && runs != 0) {
+        return;
+    }
 
     batsman.setBalls(batsman.getBalls() + 1);
     insertBallIntoOver(currentOver, new Ball(ballNo, runs, batsman));
