@@ -6,6 +6,9 @@ function showElement(element) {
     element.style = "display : block";
 }
 
+function setInnerHTML(element, html) {
+    element.innerHTML = html;
+}
 
 function appentElement(parentElement, childElement) {
     parentElement.appendChild(childElement);
