@@ -4,10 +4,10 @@ This Project is to simulate cricket match(last 4 overs, it is also configurable)
 ## Getting Started
 Copy this project folder into your local. 
 ```
-Open the "index.html" inside project folder in web browser.
+Open the "index.html" in web browser for UI.
 ```
 ```
-Open the "SpecRunner.html" inside "JavaScript/js/jasmine" folder in web browser.
+Open the "SpecRunner.html" inside "JavaScript/js/jasmine" folder in web browser for test case report.
 ```
 
 ### Requirements
