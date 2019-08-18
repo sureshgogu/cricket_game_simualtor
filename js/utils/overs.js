@@ -1,5 +1,9 @@
 function getOversLeft(overs) {
-    return TOTAL_OVERS - getOversBowled(overs);
+    var oversLeft = TOTAL_OVERS - getOversBowled(overs);
+    if(getBallsLeftInLastOver(overs) == BALLS_PER_OVER) {
+        oversLeft++;
+    }
+    return oversLeft;
 }
 
 function getOversBowled(overs) {
