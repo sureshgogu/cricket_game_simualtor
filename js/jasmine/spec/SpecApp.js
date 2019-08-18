@@ -5,16 +5,16 @@ describe("Match status", function() {
     resetStatistics();
   });
 
-  it("Match Inprogress", function() {
+  it("It should show status as Match Inprogress", function() {
     expect(getMatchStatus()).toEqual(INPROGRESS);
   });
 
-  it("Match Won by Banglore", function() {
+  it("It should show status as Match Won by Banglore", function() {
     match.setScore(40);
     expect(getMatchStatus()).toContain("Bengaluru won by");
   });
 
-  it("Match Won by Chennai (No Wickets Left)", function() {
+  it("It should show status as Match Won by Chennai (No Wickets Left)", function() {
     setBatsmanOut(match.getBatsman(), "0.1", wicketsList);
     setNextBatsmanInMatch(players, wicketsList);
 
@@ -29,14 +29,14 @@ describe("Match status", function() {
     expect(getMatchStatus()).toContain("Chennai won the match by");
   });
 
-  it("Match Won by Chennai (Scored less runs)", function() {
+  it("It should show status as Match Won by Chennai (Scored less runs)", function() {
     finishOvers();
 
     expect(getMatchStatus()).toContain("Chennai won the match by");
   });
 
 
-  it("Hurray!! Match Tie", function() {  
+  it("It should show status as Hurray!! Match Tie", function() {  
     finishOvers();
     match.setScore(39);
 
@@ -62,7 +62,7 @@ describe("Match Reset", function() {
     resetStatistics();
   });;
 
-  it("Will sets overs, players, match data to initial", function() {
+  it("It should reset overs, players, match data to initial", function() {
     expect(overs.length).toEqual(1);
     expect(players.length).toEqual(4);
     expect(match.getScore()).toEqual(0);
@@ -74,7 +74,7 @@ describe("Start Match", function() {
     startMatch();
   });;
 
-  it("Should also resets overs, players, match data to initial", function() {
+  it("It should reset overs, players, match data to initial", function() {
     expect(overs.length).toEqual(1);
     expect(players.length).toEqual(4);
     expect(match.getScore()).toEqual(0);
@@ -88,14 +88,14 @@ describe("Bowl Next ball", function() {
     resetStatistics();
   });;
 
-  it("Balls left count will be decreased by 1, if match is in progress", function() {
+  it("It should decrease balls count by 1 if match is in progress", function() {
     var ballsLeft = getBallsLeft(overs);
     bowlNextBall();
 
-    if(!isMatchInProgress) {
-
-    } else {
+    if(isMatchInProgress()) {
       expect(ballsLeft - 1).toEqual(getBallsLeft(overs));
+    } else {
+      expect(ballsLeft).toEqual(getBallsLeft(overs));
     }
   });
 });

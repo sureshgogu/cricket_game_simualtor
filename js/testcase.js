@@ -1,3 +1,7 @@
+/**
+ * This is file is combination of all js files to support test cases
+ */
+
 const TOTAL_OVERS = 4;
 const BALLS_PER_OVER = 6;
 
