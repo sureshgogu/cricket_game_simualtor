@@ -35,12 +35,12 @@ function setBatsmanStatus(batsman, status) {
     batsman.setStatus(status);
 }
 
-function setBatsmanOut(batsman, ball, wicketList) {
+function setBatsmanOut(batsman, ball, wicketsList) {
     setBatsmanStatus(batsman, BATTING_STATUS.OUT);
     insertWicketIntoList(wicketsList, new Wicket(ball, batsman));
 }
 
-function setNextBatsmanInMatch(players, wicketList) {
+function setNextBatsmanInMatch(players, wicketsList) {
     let nextBatsman = getNextBatsman(players, getCountOfWicketsFell(wicketsList) + 1);
     match.setBatsman(nextBatsman);
 }
