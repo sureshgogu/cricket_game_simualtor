@@ -1,18 +1,4 @@
-var playersInfo = [{
-    name: "Kirat Boli",
-    scoreProbability: [{ score: 0, probability: 5 }, { score: 1, probability: 30 }, { score: 2, probability: 25 }, { score: 3, probability: 10 }, { score: 4, probability: 15 }, { score: 5, probability: 1 }, { score: 6, probability: 9 }, { score: OUT, probability: 5 }]
-}, {
-    name: "NS Nodhi",
-    scoreProbability: [{ score: 0, probability: 10 }, { score: 1, probability: 40 }, { score: 2, probability: 20 }, { score: 3, probability: 5 }, { score: 4, probability: 10 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 10 }]
-}, {
-    name: "R Rumrah",
-    scoreProbability: [{ score: 0, probability: 20 }, { score: 1, probability: 30 }, { score: 2, probability: 15 }, { score: 3, probability: 5 }, { score: 4, probability: 5 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 20 }]
-}, {
-    name: "Shashi Henra",
-    scoreProbability: [{ score: 0, probability: 30 }, { score: 1, probability: 25 }, { score: 2, probability: 5 }, { score: 3, probability: 0 }, { score: 4, probability: 5 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 30 }]
-}]
-
-var overs, players, wicketsList, match;
+var playersInfo, overs, players, wicketsList, match;
 var eleCommentarySection, eleButtonStart, eleButtonNext;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -20,9 +6,31 @@ document.addEventListener('DOMContentLoaded', function () {
     eleButtonStart = document.getElementsByClassName("button-start")[0];
     eleButtonNext = document.getElementsByClassName("button-next")[0];
 
-    eleButtonStart.addEventListener("click", startMatch);
-    eleButtonNext.addEventListener("click", bowlNextbBall);
+    if(eleButtonStart) {
+        eleButtonStart.addEventListener("click", startMatch);
+    }
+    if(eleButtonNext) {
+        eleButtonNext.addEventListener("click", bowlNextBall);
+    }
+
+    setPlayersDetails();
 });
+
+function setPlayersDetails() {
+    playersInfo = [{
+        name: "Kirat Boli",
+        scoreProbability: [{ score: 0, probability: 5 }, { score: 1, probability: 30 }, { score: 2, probability: 25 }, { score: 3, probability: 10 }, { score: 4, probability: 15 }, { score: 5, probability: 1 }, { score: 6, probability: 9 }, { score: OUT, probability: 5 }]
+    }, {
+        name: "NS Nodhi",
+        scoreProbability: [{ score: 0, probability: 10 }, { score: 1, probability: 40 }, { score: 2, probability: 20 }, { score: 3, probability: 5 }, { score: 4, probability: 10 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 10 }]
+    }, {
+        name: "R Rumrah",
+        scoreProbability: [{ score: 0, probability: 20 }, { score: 1, probability: 30 }, { score: 2, probability: 15 }, { score: 3, probability: 5 }, { score: 4, probability: 5 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 20 }]
+    }, {
+        name: "Shashi Henra",
+        scoreProbability: [{ score: 0, probability: 30 }, { score: 1, probability: 25 }, { score: 2, probability: 5 }, { score: 3, probability: 0 }, { score: 4, probability: 5 }, { score: 5, probability: 1 }, { score: 6, probability: 4 }, { score: OUT, probability: 30 }]
+    }]
+}
 
 function startMatch() {
     hideElement(eleButtonStart);
@@ -36,6 +44,7 @@ function startMatch() {
 
 function resetStatistics() {
     overs = [], players = [], wicketsList = [];
+    overs.push([]);
 
     //Adding players details
     for (var i = 0, iLen = playersInfo.length; i < iLen; i++) {
@@ -46,11 +55,11 @@ function resetStatistics() {
     var striker = getNextBatsman(players, 0);
     var nonStriker = getNextBatsman(players, 1);
 
-    match = new Match(40, striker, nonStriker);
+    match = new Match(40, INPROGRESS, striker, nonStriker);
 }
 
-function bowlNextbBall() {
-    if (match.getStatus()) {
+function bowlNextBall() {
+    if (!isMatchInProgress()) {
         //If match already completed and trying continue again
         displayMatchStatusCommentory(match.getStatus());
         return;
@@ -58,10 +67,6 @@ function bowlNextbBall() {
 
     var currentOver = getCurrentOver(overs);
     var ballsBowled = getBallsBowledInOver(currentOver);
-    if (!ballsBowled) {
-        //new over
-        overs.push(currentOver);
-    }
 
     var overNo = getOversBowled(overs) - 1;
     var ballNo = ballsBowled + 1;
@@ -80,11 +85,8 @@ function bowlNextbBall() {
         //If batsman out, changing current batsman status, updating wickets and updating next batsman
         ballCommentory = ball + " " + batsman.getName() + " <b>OUT<b>";
 
-        setBatsmanStatus(batsman, BATTING_STATUS.OUT);
-        insertWicketIntoList(wicketsList, new Wicket(ball, batsman));
-
-        let nextBatsman = getNextBatsman(players, getCountOfWicketsFell(wicketsList) + 1);
-        match.setBatsman(nextBatsman);
+        setBatsmanOut(batsman, ball, wicketsList);
+        setNextBatsmanInMatch(players, wicketsList);
     } else {
         batsman.setScore(batsman.getScore() + runs);
         match.setScore(match.getScore() + runs);
@@ -101,7 +103,7 @@ function bowlNextbBall() {
     }
 
     var matchStatus = getMatchStatus();
-    if (matchStatus) {
+    if (matchStatus != INPROGRESS) {
         match.setStatus(matchStatus);
         displayMatchStatusCommentory(matchStatus);
         printScoreCard();
@@ -155,9 +157,9 @@ function printScoreCard() {
 }
 
 function getMatchStatus() {
-    var matchStatus = "";
+    var matchStatus = match.getStatus();
     if (getTargetLeft(match) <= 0) {
-        matchStatus += "Bengaluru won by " + getWicketsLeft(players, wicketsList) + " wickets";
+        matchStatus = "Bengaluru won by " + getWicketsLeft(players, wicketsList) + " wickets";
 
         var ballsRemaining = getBallsLeft(overs);
         //if won on last ball should not shown as 0 balls remaining
@@ -165,9 +167,9 @@ function getMatchStatus() {
             matchStatus += " " + getBallsRemainingMessage(ballsRemaining);
         }
     } else if (getBallsLeft(overs) <= 0 && getTargetLeft(match) == 1) {
-        matchStatus += "Hurray!! Match Tie";
+        matchStatus = "Hurray!! Match Tie";
     } else if (getWicketsLeft(players, wicketsList) <= 1 || getBallsLeft(overs) <= 0) {
-        matchStatus += "Chennai won the match by " + (getTargetLeft(match) - 1) + " runs";
+        matchStatus = "Chennai won the match by " + (getTargetLeft(match) - 1) + " runs";
     }
-    return matchStatus
+    return matchStatus;
 }

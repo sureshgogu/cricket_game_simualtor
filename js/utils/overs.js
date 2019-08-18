@@ -8,8 +8,9 @@ function getOversBowled(overs) {
 
 function getCurrentOver(overs) {
     var length = getOversBowled(overs);
-    if (length == 0 || isOverCompleted(overs[length - 1])) {
-        return [];
+    if (isOverCompleted(overs[length - 1])) {
+        overs.push([]);
+        length = getOversBowled(overs);
     }
     return overs[length - 1];
 }

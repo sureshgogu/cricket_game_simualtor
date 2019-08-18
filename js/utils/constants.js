@@ -8,3 +8,4 @@ const BATTING_STATUS = {
 }
 
 const OUT = "OUT";
+const INPROGRESS = "Inprogress";

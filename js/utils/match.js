@@ -9,3 +9,7 @@ function changeBatsmanStrike(match) {
 function getTargetLeft(match) {
     return match.getTarget() - match.getScore();
 }
+
+function isMatchInProgress() {
+    return match.getStatus() && match.getStatus() == INPROGRESS;
+}
